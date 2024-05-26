@@ -1,0 +1,19 @@
+2-secret-syntaxe:
+  extends: .syntaxe_job_template
+  variables:
+    CWD: "./2-secret"
+
+2-secret-deploy:
+  extends: .deploy_job_template
+  environment: production_secret
+  variables:
+    CWD: "./2-secret"
+  needs:
+    - job: "2-secret-syntaxe"
+
+4-secret-destroy:
+  extends: .destroy_job_template
+  variables:
+    CWD: "./2-secret"
+  needs:
+    - job: "2-secret-syntaxe"

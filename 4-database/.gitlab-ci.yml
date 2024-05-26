@@ -1,0 +1,19 @@
+4-database-syntaxe:
+  extends: .syntaxe_job_template
+  variables:
+    CWD: "./4-database"
+
+4-database-deploy:
+  extends: .deploy_job_template
+  environment: production_database
+  variables:
+    CWD: "./4-database"
+  needs:
+    - job: "4-database-syntaxe"
+
+2-database-destroy:
+  extends: .destroy_job_template
+  variables:
+    CWD: "./4-database"
+  needs:
+    - job: "4-database-syntaxe"

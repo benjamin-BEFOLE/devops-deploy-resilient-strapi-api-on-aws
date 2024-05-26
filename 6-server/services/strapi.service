@@ -1,0 +1,14 @@
+[Unit]
+Description=Strapi Server Service
+After=network.target
+
+[Service]
+Type=simple
+User=strapi
+Group=strapi
+ExecStart=/bin/bash /home/strapi/scripts/strapi-start.sh
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

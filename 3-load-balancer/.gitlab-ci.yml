@@ -1,0 +1,19 @@
+3-load-balancer-syntaxe:
+  extends: .syntaxe_job_template
+  variables:
+    CWD: "./3-load-balancer"
+
+3-load-balancer-deploy:
+  extends: .deploy_job_template
+  environment: production_load_balancer
+  variables:
+    CWD: "./3-load-balancer"
+  needs:
+    - job: "3-load-balancer-syntaxe"
+
+3-load-balancer-destroy:
+  extends: .destroy_job_template
+  variables:
+    CWD: "./3-load-balancer"
+  needs:
+    - job: "3-load-balancer-syntaxe"

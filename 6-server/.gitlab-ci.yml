@@ -1,0 +1,46 @@
+6-server-syntaxe:
+  extends: .syntaxe_job_template
+  variables:
+    CWD: "./6-server"
+  script:
+    - cd ${CWD}
+    - terraform --version
+    - terraform init
+      -var "aws_region=${AWS_REGION}"
+      -var "bucket_strapi_backend=${TERRAFORM_BACKEND_BUCKET}"
+      -backend-config="region=${AWS_REGION}"
+      -backend-config="bucket=${TERRAFORM_BACKEND_BUCKET}"
+    - terraform plan -var "aws_region=${AWS_REGION}" -var "bucket_strapi_backend=${TERRAFORM_BACKEND_BUCKET}"
+
+6-server-deploy:
+  extends: .deploy_job_template
+  environment: production_server
+  variables:
+    CWD: "./6-server"
+  needs:
+    - job: "6-server-syntaxe"
+  script:
+    - cd ${CWD}
+    - terraform --version
+    - terraform init
+      -var "aws_region=${AWS_REGION}"
+      -var "bucket_strapi_backend=${TERRAFORM_BACKEND_BUCKET}"
+      -backend-config="region=${AWS_REGION}"
+      -backend-config="bucket=${TERRAFORM_BACKEND_BUCKET}"
+    - terraform apply --auto-approve -var "aws_region=${AWS_REGION}" -var "bucket_strapi_backend=${TERRAFORM_BACKEND_BUCKET}"
+
+1-server-destroy:
+  extends: .destroy_job_template
+  variables:
+    CWD: "./6-server"
+  needs:
+    - job: "6-server-syntaxe"
+  script:
+    - cd ${CWD}
+    - terraform --version
+    - terraform init
+      -var "aws_region=${AWS_REGION}"
+      -var "bucket_strapi_backend=${TERRAFORM_BACKEND_BUCKET}"
+      -backend-config="region=${AWS_REGION}"
+      -backend-config="bucket=${TERRAFORM_BACKEND_BUCKET}"
+    - terraform destroy --auto-approve -var "aws_region=${AWS_REGION}" -var "bucket_strapi_backend=${TERRAFORM_BACKEND_BUCKET}"

@@ -1,0 +1,15 @@
+terraform-backend-deploy:
+  stage: Deploy Terraform Backend
+  extends: .awscli_job_template
+  when: manual
+  script:
+    - aws --version
+    - aws s3 mb "s3://${TERRAFORM_BACKEND_BUCKET}" --region ${AWS_REGION}
+
+terraform-backend-destroy:
+  stage: Destroy Terraform Backend
+  extends: .awscli_job_template
+  when: manual
+  script:
+    - aws --version
+    - aws s3 rb "s3://${TERRAFORM_BACKEND_BUCKET}" --force --region ${AWS_REGION}
