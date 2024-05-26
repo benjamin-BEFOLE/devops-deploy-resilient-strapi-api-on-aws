@@ -1,0 +1,23 @@
+variables:
+  AWS_CLI_VERSION: 2.14.6
+  AWS_REGION: "us-east-1"
+  TERRAFORM_VERSION: 1.8.3
+  TERRAFORM_BACKEND_BUCKET: "your-strapi-bucket-7434963339"
+
+stages:
+  - Deploy Terraform Backend
+  - Syntaxe
+  - Build
+  - Deploy
+  - Destroy
+  - Destroy Terraform Backend
+
+include:
+  - local: ".templates.gitlab-ci.yml"
+  - local: "/0-terraform-backend/.gitlab-ci.yml"
+  - local: "/1-network/.gitlab-ci.yml"
+  - local: "/2-secret/.gitlab-ci.yml"
+  - local: "/3-load-balancer/.gitlab-ci.yml"
+  - local: "/4-database/.gitlab-ci.yml"
+  - local: "/5-app/.gitlab-ci.yml"
+  - local: "/6-server/.gitlab-ci.yml"

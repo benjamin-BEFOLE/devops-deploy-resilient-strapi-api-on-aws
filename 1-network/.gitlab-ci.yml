@@ -1,0 +1,19 @@
+1-network-syntaxe:
+  extends: .syntaxe_job_template
+  variables:
+    CWD: "./1-network"
+
+1-network-deploy:
+  extends: .deploy_job_template
+  environment: production_network
+  variables:
+    CWD: "./1-network"
+  needs:
+    - job: "1-network-syntaxe"
+
+5-network-destroy:
+  extends: .destroy_job_template
+  variables:
+    CWD: "./1-network"
+  needs:
+    - job: "1-network-syntaxe"

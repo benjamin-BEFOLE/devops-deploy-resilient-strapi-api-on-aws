@@ -1,0 +1,32 @@
+app-build:
+  stage: Build
+  image:
+    name: node:18.20.2-slim
+    entrypoint: [""]
+  when: manual
+  script:
+    - cd ./5-app
+    - node --version
+    - yarn install
+    - NODE_ENV=production yarn run build
+    - tar -zcvf app.tar.gz
+      build/
+      config/
+      public/
+      favicon.ico
+      favicon.png
+      package.json
+      yarn.lock
+  artifacts:
+    paths:
+      - 5-app/app.tar.gz
+    expire_in: 1 day
+
+5-app-deploy:
+  stage: Deploy
+  extends: .awscli_job_template
+  when: manual
+  script:
+    - cd ./5-app
+    - aws --version
+    - aws s3 cp app.tar.gz "s3://${TERRAFORM_BACKEND_BUCKET}/artefacts/strapi/app.tar.gz" --region ${AWS_REGION}

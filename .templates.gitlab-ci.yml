@@ -1,0 +1,48 @@
+.awscli_job_template:
+  image:
+    name: amazon/aws-cli:${AWS_CLI_VERSION}
+    entrypoint: [""]
+
+.terraform_job_template:
+  image:
+    name: hashicorp/terraform:${TERRAFORM_VERSION}
+    entrypoint: [""]
+
+.syntaxe_job_template:
+  stage: Syntaxe
+  extends: .terraform_job_template
+  when: manual
+  script:
+    - cd ${CWD}
+    - terraform --version
+    - terraform init
+      -var "aws_region=${AWS_REGION}"
+      -backend-config="region=${AWS_REGION}"
+      -backend-config="bucket=${TERRAFORM_BACKEND_BUCKET}"
+    - terraform plan -var "aws_region=${AWS_REGION}"
+
+.deploy_job_template:
+  stage: Deploy
+  extends: .terraform_job_template
+  when: manual
+  script:
+    - cd ${CWD}
+    - terraform --version
+    - terraform init
+      -var "aws_region=${AWS_REGION}"
+      -backend-config="region=${AWS_REGION}"
+      -backend-config="bucket=${TERRAFORM_BACKEND_BUCKET}"
+    - terraform apply --auto-approve -var "aws_region=${AWS_REGION}"
+
+.destroy_job_template:
+  stage: Destroy
+  extends: .terraform_job_template
+  when: manual
+  script:
+    - cd ${CWD}
+    - terraform --version
+    - terraform init
+      -var "aws_region=${AWS_REGION}"
+      -backend-config="region=${AWS_REGION}"
+      -backend-config="bucket=${TERRAFORM_BACKEND_BUCKET}"
+    - terraform destroy --auto-approve -var "aws_region=${AWS_REGION}"
